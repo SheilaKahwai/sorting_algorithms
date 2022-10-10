@@ -63,8 +63,10 @@ listint_t *swap(listint_t **current, listint_t **sorted)
 		tmp->prev = *sorted;
 	}
 	if (*current != NULL)
+	{
 		(*current)->next = *sorted;
 		(*current)->prev = (*sorted)->prev;
+	}
 	if ((*sorted)->prev != NULL)
 		(*sorted)->prev->next = *current;
 	((*sorted)->prev) = *current;
