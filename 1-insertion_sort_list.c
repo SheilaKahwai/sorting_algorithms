@@ -1,56 +1,73 @@
 #include "sort.h"
-
+listint_t *swap(listint_t **current, listint_t **sorted);
 /**
- * insertion_sort_list - algorithm to sort an unordered list
- * by inserting a node at the appropriate index
- * @list: double pointer to head of unordered list to sort
+ * insertion_sort_list - Sorts a doubly linked list of integers in ascending
+ * order using the insertion sort algorithm
+ * @list: Pointer to a pointer to the head of the list.
  */
-
 void insertion_sort_list(listint_t **list)
 {
-    listint_t *temp, *curr;
-    int flag;
+	listint_t *current;
+	listint_t *sorted;
 
-    temp = (*list)->next;
-    while (temp)
-    {
-	flag = 0;
-        if (temp->n < temp->prev->n)
-        {
-            curr = temp->prev;
-            while (curr)
-            {
-                if (curr > temp && curr != *list)
-                {
-                    curr->next = temp->next;
-                    if (temp->next->prev)
-                        temp->next->prev = curr;
-                    temp->next = curr;
-		    temp->prev = curr->prev;
-		    curr->prev->next = temp;
-		    curr->prev = temp;
-                    curr = temp->prev;
-		    flag = 1;
-                }
-                else if (curr > temp && curr == *list)
-                {
-                    temp->next = curr;
-                    curr->prev = temp;
-                    temp->prev = NULL;
-		    flag = 1;
-                }
-                else
-                {
-                    temp->next = curr->next;
-                    curr->next->prev = temp;
-                    curr->next = temp;
-                    temp->prev = curr;
-		    flag = 1;
-                }
-		if (flag == 1)
-			print_list(list);
-            }
-        }
-        temp = temp->next;
-    }
+
+	if (list == NULL || *list == NULL || (*list)->next == NULL)
+		return;
+
+	sorted = *list;
+	current = (*list)->next;
+
+	while (current != NULL)
+	{
+		if (sorted != NULL &&  current->n < sorted->n)
+		{
+
+			current = swap(&current, &sorted);
+			sorted = current->prev;
+			if (sorted == NULL)
+				*list = current;
+			print_list(*list);
+
+			while (sorted != NULL && current->n < sorted->n)
+			{
+				current = swap(&current, &sorted);
+				sorted = current->prev;
+				if (sorted == NULL)
+					*list = current;
+				print_list(*list);
+			}
+		}
+		else
+		{
+			sorted = current;
+			current = sorted->next;
+		}
+	}
+}
+
+/**
+ * swap - Swaps the numbers in the array to put them in order
+ * @current: Pointer to a pointer to a node in the linked list
+ * @sorted: Pointer to a pointer to a node in the linked list
+ * Return: A pointer to the current node.
+ */
+listint_t *swap(listint_t **current, listint_t **sorted)
+{
+	listint_t *tmp;
+
+	tmp = (*current)->next;
+	if (*sorted != NULL)
+		(*sorted)->next = tmp;
+	if (tmp != NULL)
+	{
+		tmp->prev = *sorted;
+	}
+	if (*current != NULL)
+		(*current)->next = *sorted;
+		(*current)->prev = (*sorted)->prev;
+	if ((*sorted)->prev != NULL)
+		(*sorted)->prev->next = *current;
+	((*sorted)->prev) = *current;
+
+	return (*current);
 }
